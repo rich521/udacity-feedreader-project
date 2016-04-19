@@ -3,16 +3,15 @@
  * This is the spec file that Jasmine will read and contains
  * all of the tests that will be run against your application.
  */
-
 /* We're placing all of our tests within the $() function,
  * since some of these tests may require DOM elements. We want
  * to ensure they don't run until the DOM is ready.
  */
 $(function() {
     /* This is our first test suite - a test suite just contains
-    * a related set of tests. This suite is all about the RSS
-    * feeds definitions, the allFeeds variable in our application.
-    */
+     * a related set of tests. This suite is all about the RSS
+     * feeds definitions, the allFeeds variable in our application.
+     */
     describe('RSS Feeds', function() {
         /* This is our first test - it tests to make sure that the
          * allFeeds variable has been defined and that it is not
@@ -32,9 +31,10 @@ $(function() {
          * and that the URL is not empty.
          */
 
-        it('URL defined', function() {
+        it('has URLs', function() {
             for (var i = 0; i < allFeeds.length; i++) {
                 expect(allFeeds[i].url).toBeDefined();
+                expect(allFeeds[i].url).not.toEqual("");
             }
         });
 
@@ -43,9 +43,10 @@ $(function() {
          * and that the name is not empty.
          */
 
-        it('Name defined', function() {
+        it('has names', function() {
             for (var i = 0; i < allFeeds.length; i++) {
                 expect(allFeeds[i].name).toBeDefined();
+                expect(allFeeds[i].name).not.toEqual("");
             }
         });
     });
@@ -58,30 +59,64 @@ $(function() {
          * the CSS to determine how we're performing the
          * hiding/showing of the menu element.
          */
-
-         /* TODO: Write a test that ensures the menu changes
-          * visibility when the menu icon is clicked. This test
-          * should have two expectations: does the menu display when
-          * clicked and does it hide when clicked again.
-          */
-
+        it('is hidden', function() {
+            expect($('.menu-hidden').is(':visible')).toBe(true);
+        });
+        /* TODO: Write a test that ensures the menu changes
+         * visibility when the menu icon is clicked. This test
+         * should have two expectations: does the menu display when
+         * clicked and does it hide when clicked again.
+         */
+        it('slides when clicked', function() {
+            //opens menu
+            $(".menu-icon-link").click();
+            expect($('.menu-hidden').is(':visible')).toBe(false);
+            //closed menu, check if class is visible
+            $(".menu-icon-link").click();
+            expect($('.menu-hidden').is(':visible')).toBe(true);
+        });
+    });
     /* TODO: Write a new test suite named "Initial Entries" */
 
+    describe('Initial Entries', function() {
         /* TODO: Write a test that ensures when the loadFeed
          * function is called and completes its work, there is at least
          * a single .entry element within the .feed container.
          * Remember, loadFeed() is asynchronous so this test will require
          * the use of Jasmine's beforeEach and asynchronous done() function.
          */
+        beforeEach(function(done) {
+            loadFeed(0, done); //0 for the first entry
+            //done();
+        });
+        //check if child of feed class is empty
+        it('load at least once', function() {
+            expect($('.feed').is(':empty')).toBe(false);
+        });
 
-    /* TODO: Write a new test suite named "New Feed Selection"
-
+    });
+    /* TODO: Write a new test suite named "New Feed Selection"*/
+    describe('New Feed Selection', function() {
         /* TODO: Write a test that ensures when a new feed is loaded
          * by the loadFeed function that the content actually changes.
          * Remember, loadFeed() is asynchronous.
          */
+        var htmlChange;
+        beforeEach(function(done) {
+            //load the next feed link
+            loadFeed(1, function() {
+                //just take the header html for comparison
+                htmlLoad = $('.header-title').html();
+                done();
+            });
+        });
+
+        it('changed after clicking different feed link', function(done) {
+            //reload back to default
+            loadFeed(0, function() {
+                expect($('.header-title').html()).not.toEqual(htmlChange);
+                done();
+            });
+        });
     });
-
 }());
-
-
