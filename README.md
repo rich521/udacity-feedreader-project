@@ -1,5 +1,7 @@
 ##Feedreader Project using Jasmine
 
+Objective: completed the unfinished test suite for the web application
+
 ####Instructions
 
 1. Open index.html to run the website.
